@@ -26,6 +26,12 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+typedef struct {
+  uint32_t current_time; // - Holds the timestamp of the system down to ms, as a unsigned 32 bit integer.
+  uint32_t pressure;     // - Pressure reading
+  uint8_t sys_status;    // - System status at time of reporting
+  float temp;
+}; packet;
 
 /* USER CODE END PTD */
 
@@ -69,6 +75,14 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+    char buffer[128]; // - String buffer
+    uint32_t last_transmission = 0; // - Time since last transmission
+    packet d_payload;
+    
+    d_payload.current_time = 0;
+    d_payload.pressure = 30;
+    d_payload.sys_status = 1;
+    d_payload.temp = 78.0f;
 
   /* USER CODE END 1 */
 
@@ -109,6 +123,13 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    if (HAL_GetTick() - last_transmission >= 1000){     // - Updates the current time if 1+ seconds have passed
+       last_transmission = HAL_GetTick(); // - Backing up the last timestamp
+       d_payload.current_time = HAL_GetTick(); // - Getting the new time
+       snprintf(buffer, sizeof(buffer), "Time: %lu ms, Pres: %lu hPa, Stat: %d, Temp: %.1f C\r\n", // - Laying the foundation to frontload the values for the output
+                d_payload.current_time, d_payload.pressure, d_payload.sys_status, d_payload.temp); // -  Loads the values into the buffer to send to the hmi
+       HAL_UART_Transmit(&huart2, (unint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY); // - Transmits the data to the Recipient, preformatted as-is define above
+    }
   }
   /* USER CODE END 3 */
 }
