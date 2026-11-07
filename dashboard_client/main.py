@@ -7,5 +7,6 @@ cnx = ser.Serial(PORT, BAUD_RATE)
 
 # - Printing the raw feed to the console
 while 1:
-    telemetry = cnx.readline()
+    # - Grabbing the signal from the board, decoding it into human-readable language and removing carriage return and line feed characters
+    telemetry = cnx.readline().decode('utf-8').strip()
     print(telemetry)
