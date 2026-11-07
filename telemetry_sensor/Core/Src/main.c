@@ -126,11 +126,15 @@ int main(void)
     /* USER CODE BEGIN 3 */
     if (HAL_GetTick() - last_transmission >= 1000){     // - Updates the current time if 1+ seconds have passed
        last_transmission = HAL_GetTick(); // - Backing up the last timestamp
+       
        d_payload.current_time = HAL_GetTick(); // - Getting the new time
+
        snprintf(buffer, sizeof(buffer), "Time: %lu ms, Pres: %lu hPa, Stat: %d, Temp: %d.%d C\r\n", // - Laying the foundation to frontload the values for the output
                 d_payload.current_time, d_payload.pressure, d_payload.sys_status, // -  Loads the values into the buffer to send to the hmi
                 (int)d_payload.temp, ((int)(d_payload.temp * 10)) % 10); // -  Splitting the float type temp into two ints 
+
        HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY); // - Transmits the data to the Recipient, preformatted as-is define above
+
        BSP_LED_Toggle(LED2);
     }
   }
