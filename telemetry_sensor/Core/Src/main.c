@@ -22,7 +22,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <time.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -80,11 +82,6 @@ int main(void)
     uint32_t last_transmission = 0; // - Time since last transmission
     packet d_payload;
     
-    d_payload.current_time = 0;
-    d_payload.pressure = 25;
-    d_payload.sys_status = 1;
-    d_payload.temp = 78.0f;
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -107,7 +104,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  srand( HAL_GetTick()); // - Seeds the RNG machine
   /* USER CODE END 2 */
 
   /* Initialize leds */
@@ -120,11 +117,14 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
+    d_payload.current_time = 0;
+    d_payload.pressure = rand() % (1050 - 950 + 1) + 950; // - Generates a random value between 950 and 1050 hPa, normal barometric range
+    d_payload.temp = (15 + (float)rand() / RAND_MAX * (60 - 15)); 
+    d_payload.sys_status = 1;
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    if (HAL_GetTick() - last_transmission >= 1000){     // - Updates the current time if 1+ seconds have passed
+    if (HAL_GetTick() - last_transmission >= 100){     // - Updates the current time if 1+ seconds have passed
        last_transmission = HAL_GetTick(); // - Backing up the last timestamp
        
        d_payload.current_time = HAL_GetTick(); // - Getting the new time

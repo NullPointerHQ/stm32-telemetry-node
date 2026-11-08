@@ -10,7 +10,6 @@ import sys                                     # - System level functions
 PORT = "COM3"
 BAUD_RATE = 115200
 cnx = ser.Serial(PORT, BAUD_RATE)
-# Time: 1474000 ms, Pres: 25 hPa, Stat: 1, Temp: 78.0 C
 
 data_pattern = r"Time: (\d+) ms, Pres: ([\d\.]+) hPa, Stat: (\d), Temp: ([\d\.]+) C" # - The pattern used by re to parse the telemetry stream
 
@@ -96,9 +95,7 @@ def core(frame):
          family = 'consolas',
          ha='center', va='center',
          bbox = dict(boxstyle='round,pad=0.5', facecolor='#111111', edgecolor=status_color, lw=1.5))
-
-
-
+           
 fig, (ax_temp, ax_pressure) = plt.subplots(2,1, figsize=(14,7))
 ax_sys_status = fig.add_axes([0.83, 0.02, 0.15, 0.08]) # - Adds the system status to the bottom right corner
 fig.suptitle("NUCLEO - F446RE - Real-Time System Telemetry", fontsize=16, y=0.95, color='cyan', fontweight='bold', family='consolas')
